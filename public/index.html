@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html ng-app="crudApp">
+<head>
+
+<title>Student CRUD</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Animate CSS -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+<style>
+
+/* Dark Background */
+body{
+background:#0f172a;
+color:white;
+font-family:Segoe UI;
+}
+
+/* Glass card */
+.card-dark{
+background:rgba(255,255,255,0.05);
+border-radius:15px;
+padding:30px;
+box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+
+/* Neon Title */
+.title{
+text-align:center;
+font-size:35px;
+margin-bottom:30px;
+color:#00ffff;
+text-shadow:0 0 10px cyan,0 0 20px cyan;
+}
+
+/* Input styling */
+input{
+background:#1e293b !important;
+border:none !important;
+color:white !important;
+}
+
+/* Neon Button */
+.btn-neon{
+background:#00ffff;
+border:none;
+color:black;
+font-weight:bold;
+box-shadow:0 0 10px cyan,0 0 20px cyan;
+transition:0.3s;
+}
+
+.btn-neon:hover{
+box-shadow:0 0 20px cyan,0 0 40px cyan;
+transform:scale(1.05);
+}
+
+/* Table Dark */
+table{
+background:#111827;
+color:white;
+}
+
+th{
+color:#00ffff;
+}
+
+/* Row Hover Glow */
+tr:hover{
+background:#1e293b;
+box-shadow:0 0 10px cyan;
+}
+
+/* Page Center */
+.container{
+margin-top:50px;
+}
+
+</style>
+
+</head>
+
+<body ng-controller="crudController">
+
+<div class="container">
+
+<div class="card-dark animate__animated animate__fadeInDown">
+
+<div class="title">
+⚡ Student CRUD System
+</div>
+
+<!-- Form -->
+
+<form class="row g-3" ng-submit="addStudent()">
+
+<div class="col-md-4">
+<input type="text" class="form-control" ng-model="student.name" placeholder="Name" required>
+</div>
+
+<div class="col-md-4">
+<input type="email" class="form-control" ng-model="student.email" placeholder="Email" required>
+</div>
+
+<div class="col-md-4">
+<input type="text" class="form-control" ng-model="student.course" placeholder="Course" required>
+</div>
+
+<div class="col-12 text-center">
+<button class="btn btn-neon">Add Student</button>
+</div>
+
+</form>
+
+<hr>
+
+<!-- Table -->
+
+<table class="table table-dark table-hover">
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Course</th>
+<th>Action</th>
+</tr>
+
+<tr ng-repeat="s in students">
+
+<td>{{s.id}}</td>
+
+<td>
+<input class="form-control" ng-model="s.name">
+</td>
+
+<td>
+<input class="form-control" ng-model="s.email">
+</td>
+
+<td>
+<input class="form-control" ng-model="s.course">
+</td>
+
+<td>
+
+<button class="btn btn-success btn-sm"
+ng-click="updateStudent(s)">
+Update
+</button>
+
+<button class="btn btn-danger btn-sm"
+ng-click="deleteStudent(s.id)">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+var app = angular.module("crudApp", []);
+
+app.controller("crudController", function($scope,$http){
+
+$scope.getStudents=function(){
+$http.get("http://localhost:3000/students")
+.then(function(response){
+$scope.students=response.data;
+});
+}
+
+$scope.addStudent=function(){
+$http.post("http://localhost:3000/add",$scope.student)
+.then(function(){
+$scope.student={};
+$scope.getStudents();
+});
+}
+
+$scope.updateStudent=function(student){
+$http.put("http://localhost:3000/update/"+student.id,student)
+.then(function(){
+$scope.getStudents();
+});
+}
+
+$scope.deleteStudent=function(id){
+$http.delete("http://localhost:3000/delete/"+id)
+.then(function(){
+$scope.getStudents();
+});
+}
+
+$scope.getStudents();
+
+});
+
+</script>
+
+</body>
+</html>
